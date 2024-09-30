@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../style.css";
 
 const Todo = () => {
@@ -7,7 +7,11 @@ const Todo = () => {
   const [editIndex, setEditIndex] = useState(null); // New state to track the index of the item being edited
   const [editData, setEditData] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-
+  const [filterData, setFilterData] = useState([])
+  
+  useEffect(()=>{
+    setFilterData(todoList)
+  },[todoList])
   //To add new todo item to list
   const addTodoItems = () => {
     const newTodo = { text: data, completed: false };
@@ -50,10 +54,22 @@ const Todo = () => {
     setEditIndex(null); // Reset the edit index
   };
 
+  const handleSearch = (e) =>{
+    let filter = [];
+    todoList.forEach(element => {
+      if(element?.text?.toLowerCase().includes(e.target.value))
+        filter.push(element)
+    });
+    setFilterData(filter)
+  }
+
   return (
     <>
       <div className={`todo-container ${isEditing ? "blur" : ""}`}>
         <h1>Todo List</h1>
+        <input type="text" placeholder="search"  onChange={handleSearch}/>
+        <br/>
+        <br />
         <input
           type={"text"}
           placeholder="New Todo"
@@ -69,7 +85,7 @@ const Todo = () => {
         <br />
         <div>
           <ul className="todo-list">
-            {todoList?.map((item, index) => (
+            {filterData?.map((item, index) => (
               <div>
                 <li
                   className={`todo-item ${item.completed ? "completed" : ""}`}
